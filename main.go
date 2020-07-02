@@ -24,7 +24,7 @@ func getKubeClient() (*kubernetes.Clientset, error) {
 		if err != nil {
 			return nil, err
 		}
-	} else if err == nil {
+	} else if err != nil {
 		return nil, err
 	}
 	return kubernetes.NewForConfig(c)
