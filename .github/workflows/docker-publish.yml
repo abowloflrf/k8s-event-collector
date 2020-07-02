@@ -14,7 +14,7 @@ on:
   pull_request:
 
 env:
-  IMAGE_NAME: app
+  IMAGE_NAME: k8s-events-dispatcher
 
 jobs:
   # Run tests.
