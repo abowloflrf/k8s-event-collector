@@ -23,9 +23,9 @@ type EventController struct {
 }
 
 func (ec *EventController) handleEvent(e *corev1.Event, handleType string) {
-	logrus.Infof("event %s [%s][%s][%s][%s], created since %v", handleType, string(e.UID), e.Namespace, e.InvolvedObject.Name, e.Reason, time.Now().Sub(e.CreationTimestamp.Time))
+	logrus.Infof("event %s [%s][%s][%s][%s], created since %v", handleType, string(e.UID), e.Namespace, e.InvolvedObject.Name, e.Reason, time.Since(e.CreationTimestamp.Time))
 	// prevent handle the old events when controller just start
-	if time.Now().Sub(e.LastTimestamp.Time) > time.Second*5 {
+	if time.Since(e.LastTimestamp.Time) > time.Second*5 {
 		return
 	}
 
