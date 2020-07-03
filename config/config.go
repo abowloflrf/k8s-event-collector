@@ -16,6 +16,8 @@ type Config struct {
 type ElasticSearch struct {
 	Addresses []string
 	Index     string
+	Username  string
+	Password  string
 }
 
 type OtherTarget struct {

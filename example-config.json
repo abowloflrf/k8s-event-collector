@@ -5,7 +5,9 @@
             "addresses": [
                 "http://localhost:9200"
             ],
-            "index": "demo_k8_event"
+            "index": "demo_k8s_event",
+            "username": "username",
+            "password": "password"
         }
     }
 }

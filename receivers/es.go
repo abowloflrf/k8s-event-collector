@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/abowloflrf/k8s-events-dispatcher/config"
 	"github.com/elastic/go-elasticsearch/v7"
 	"github.com/elastic/go-elasticsearch/v7/esapi"
 	corev1 "k8s.io/api/core/v1"
@@ -17,9 +18,11 @@ type EsTarget struct {
 	index  string
 }
 
-func NewElasticsearchTarget(address []string, index string) (*EsTarget, error) {
+func NewElasticsearchTarget(cfg *config.ElasticSearch) (*EsTarget, error) {
 	escfg := elasticsearch.Config{
-		Addresses: address,
+		Addresses: cfg.Addresses,
+		Username:  cfg.Username,
+		Password:  cfg.Password,
 	}
 	c, err := elasticsearch.NewClient(escfg)
 	if err != nil {
@@ -29,7 +32,7 @@ func NewElasticsearchTarget(address []string, index string) (*EsTarget, error) {
 	return &EsTarget{
 		client: c,
 		config: escfg,
-		index:  index,
+		index:  cfg.Index,
 	}, nil
 }
 
