@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/abowloflrf/k8s-events-dispatcher/config"
 	"github.com/elastic/go-elasticsearch/v7"
 	"github.com/elastic/go-elasticsearch/v7/esapi"
+	"github.com/sirupsen/logrus"
 	corev1 "k8s.io/api/core/v1"
 )
 
@@ -53,8 +55,13 @@ func (et *EsTarget) Send(e *corev1.Event) error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
-	_ = resp.Body
+
+	if resp.HasWarnings() {
+		logrus.Warningf("request to elasticsearch: %s", resp.Warnings())
+	}
+	if resp.IsError() {
+		return fmt.Errorf("request to elasticsearch error, status: %s resp: %s", resp.Status(), resp.String())
+	}
 	return nil
 }
 
