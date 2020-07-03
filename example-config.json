@@ -1,0 +1,11 @@
+{
+    "log": "info",
+    "receivers": {
+        "elasticsearch": {
+            "addresses": [
+                "http://localhost:9200"
+            ],
+            "index": "demo_k8_event"
+        }
+    }
+}

@@ -1,0 +1,32 @@
+{
+    "metadata": {
+        "name": "nginx-deployment-55f4749b8f-j64kv.161de160f5df3408",
+        "namespace": "default",
+        "selfLink": "/api/v1/namespaces/default/events/nginx-deployment-55f4749b8f-j64kv.161de160f5df3408",
+        "uid": "ef75cc8b-999c-4e6d-b6a6-f53432e76bb7",
+        "resourceVersion": "1817265",
+        "creationTimestamp": "2020-07-02T08:14:09Z"
+    },
+    "involvedObject": {
+        "kind": "Pod",
+        "namespace": "default",
+        "name": "nginx-deployment-55f4749b8f-j64kv",
+        "uid": "2051d457-5713-4acc-972b-2cc0d235452f",
+        "apiVersion": "v1",
+        "resourceVersion": "1817255",
+        "fieldPath": "spec.containers{nginx}"
+    },
+    "reason": "Started",
+    "message": "Started container nginx",
+    "source": {
+        "component": "kubelet",
+        "host": "minikube"
+    },
+    "firstTimestamp": "2020-07-02T08:14:09Z",
+    "lastTimestamp": "2020-07-02T08:14:09Z",
+    "count": 1,
+    "type": "Normal",
+    "eventTime": null,
+    "reportingComponent": "",
+    "reportingInstance": ""
+}
