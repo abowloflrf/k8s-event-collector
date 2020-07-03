@@ -60,4 +60,4 @@ jobs:
 
           # push to hub.docker.com
           docker tag $IMAGE_NAME abowloflrf/k8s-events-dispatcher:$VERSION
-          docker push $IMAGE_NAME abowloflrf/k8s-events-dispatcher:$VERSION
+          docker push abowloflrf/k8s-events-dispatcher:$VERSION
