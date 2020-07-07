@@ -24,7 +24,7 @@ var LeaderElect bool
 const component = "eventsdispatcher"
 
 func init() {
-	flag.StringVar(&configFile, "t", "", "config file to use, default: /etc/eventsdispatcher/config.json")
+	flag.StringVar(&configFile, "c", "", "config file to use, default: /etc/eventsdispatcher/config.json")
 	flag.BoolVar(&LeaderElect, "leaderelect", false, "set true to enable leader election mode, by default use standalone mode")
 	flag.Parse()
 	// initial logger using logurs
