@@ -6,9 +6,8 @@ import (
 )
 
 type Config struct {
-	Log         string
-	LeaderElect bool
-	Receivers   struct {
+	Log       string
+	Receivers struct {
 		ElasticSearch *ElasticSearch
 		Other         *OtherTarget
 	}

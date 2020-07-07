@@ -24,7 +24,7 @@ var LeaderElect bool
 const component = "eventsdispatcher"
 
 func init() {
-	flag.StringVar(&configFile, "c", "", "config file to use, default: /etc/eventsdispatcher/config.json")
+	flag.StringVar(&configFile, "c", "", "config file to use, default find path: ./config.json -> /etc/eventsdispatcher/config.json -> $HOME/.config/eventsdispatcher/config.json")
 	flag.BoolVar(&LeaderElect, "leaderelect", false, "set true to enable leader election mode, by default use standalone mode")
 	flag.Parse()
 	// initial logger using logurs
@@ -55,24 +55,20 @@ func main() {
 
 	run := func(ctx context.Context) {
 		ec := NewEventController(cs)
-		ec.Run(stop)
+		ec.Run(10, stop)
 	}
 
 	// standalone mode
 	if !LeaderElect {
 		logrus.Info("starting with stand-alone mode")
 		run(ctx)
-		logrus.Fatal("unreachable")
+		logrus.Fatal("exited")
 	}
 
 	// leader-election mode
 	var id string
 	var leaseLockName = component
 	var leaseLockNamespace string
-	if !config.C.LeaderElect {
-		logrus.Println("exited")
-		os.Exit(0)
-	}
 	id, err = os.Hostname()
 	if err != nil {
 		logrus.Fatalf("get hostname %v", err)
