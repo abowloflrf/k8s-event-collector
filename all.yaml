@@ -7,28 +7,31 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  name: eventsdispatcher 
+  name: eventsdispatcher
 rules:
-- apiGroups: [""]
-  resources: ["events"]
-  verbs: ["get", "watch", "list"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["get", "watch", "list"]
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["create", "delete", "get", "patch", "update"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  name: eventsdispatcher 
+  name: eventsdispatcher
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: eventsdispatcher
 subjects:
-- kind: ServiceAccount
-  name: eventsdispatcher
-  namespace: kube-system
+  - kind: ServiceAccount
+    name: eventsdispatcher
+    namespace: kube-system
 ---
 apiVersion: v1
 data:
-  config.json: |- 
+  config.json: |-
     {
         "log": "info",
         "receivers": {
@@ -69,8 +72,8 @@ spec:
           image: abowloflrf/k8s-events-dispatcher:latest
           imagePullPolicy: Always
           volumeMounts:
-          - name: config-volume
-            mountPath: /etc/eventsdispatcher
+            - name: config-volume
+              mountPath: /etc/eventsdispatcher
       serviceAccount: eventsdispatcher
       volumes:
         - name: config-volume
