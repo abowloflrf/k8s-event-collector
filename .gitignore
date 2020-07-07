@@ -16,3 +16,6 @@ vendor/
 
 k8s-events-dispatcher
 config.json
+
+.idea
+.vscode
