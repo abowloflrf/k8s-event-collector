@@ -96,10 +96,15 @@ func NewEventController(cs *kubernetes.Clientset) *EventController {
 	evInformer := factory.Core().V1().Events()
 
 	// only es receiver was implemented currently
+	var err error
 	var target receiver.Receiver
-	target, err := receiver.NewElasticsearchTarget(config.C.Receivers.ElasticSearch)
-	if err != nil {
-		logrus.Errorf("create receiver error: %v", err)
+	if config.C.Receivers.ElasticSearch != nil {
+		target, err = receiver.NewElasticsearchTarget(config.C.Receivers.ElasticSearch)
+		if err != nil {
+			logrus.Errorf("create receiver error: %v", err)
+			target, _ = receiver.NewDiscardTarget()
+		}
+	} else {
 		target, _ = receiver.NewDiscardTarget()
 	}
 

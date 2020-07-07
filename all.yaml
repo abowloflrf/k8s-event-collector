@@ -66,14 +66,12 @@ spec:
     spec:
       containers:
         - name: dispatcher
-          image: docker.pkg.github.com/abowloflrf/k8s-events-dispatcher/k8s-events-dispatcher:latest
+          image: abowloflrf/k8s-events-dispatcher:latest
           imagePullPolicy: Always
           volumeMounts:
           - name: config-volume
             mountPath: /etc/eventsdispatcher
       serviceAccount: eventsdispatcher
-      imagePullSecrets:
-      - name: githubpackage
       volumes:
         - name: config-volume
           configMap:
