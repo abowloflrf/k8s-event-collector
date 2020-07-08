@@ -9,7 +9,7 @@ type Config struct {
 	Log       string
 	Receivers struct {
 		ElasticSearch *ElasticSearch
-		Other         *OtherTarget
+		Stdout        bool
 	}
 }
 
@@ -18,10 +18,6 @@ type ElasticSearch struct {
 	Index     string
 	Username  string
 	Password  string
-}
-
-type OtherTarget struct {
-	Foo string
 }
 
 var C *Config

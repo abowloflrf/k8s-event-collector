@@ -48,9 +48,12 @@ func (ec *EventController) processNextItem() bool {
 	}
 	event := item.(*corev1.Event)
 	defer ec.queue.Done(item)
+	if !ec.r.Filter(event) {
+		return true
+	}
 	err := ec.r.Send(event)
 	if err != nil {
-		logrus.Errorf("send event error: %v", err)
+		logrus.Errorf("send event to [%s] error: %v", ec.r.Name(), err)
 	}
 	return true
 }

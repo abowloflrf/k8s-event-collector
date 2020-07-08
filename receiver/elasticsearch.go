@@ -5,6 +5,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"time"
 
 	"github.com/abowloflrf/k8s-event-collector/config"
@@ -15,13 +17,13 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-type EsTarget struct {
+type ElasticsearchTarget struct {
 	client *elasticsearch.Client
 	config elasticsearch.Config
 	index  string
 }
 
-func NewElasticsearchTarget(cfg *config.ElasticSearch) (*EsTarget, error) {
+func NewElasticsearchTarget(cfg *config.ElasticSearch) (*ElasticsearchTarget, error) {
 	escfg := elasticsearch.Config{
 		Addresses: cfg.Addresses,
 		Username:  cfg.Username,
@@ -32,14 +34,18 @@ func NewElasticsearchTarget(cfg *config.ElasticSearch) (*EsTarget, error) {
 		return nil, err
 	}
 
-	return &EsTarget{
+	return &ElasticsearchTarget{
 		client: c,
 		config: escfg,
 		index:  cfg.Index,
 	}, nil
 }
 
-func (et *EsTarget) Send(e *corev1.Event) error {
+func (et *ElasticsearchTarget) Name() string {
+	return "elasticsearch"
+}
+
+func (et *ElasticsearchTarget) Send(e *corev1.Event) error {
 	toSend, err := json.Marshal(e)
 	if err != nil {
 		return err
@@ -56,6 +62,8 @@ func (et *EsTarget) Send(e *corev1.Event) error {
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 
 	if resp.HasWarnings() {
 		logrus.Warningf("request to elasticsearch: %s", resp.Warnings())
@@ -66,4 +74,8 @@ func (et *EsTarget) Send(e *corev1.Event) error {
 	return nil
 }
 
-func (et *EsTarget) Close() {}
+func (et *ElasticsearchTarget) Filter(e *corev1.Event) bool {
+	return true
+}
+
+func (et *ElasticsearchTarget) Close() {}
