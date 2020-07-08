@@ -14,7 +14,8 @@
 # Dependency directories (remove the comment below to include it)
 vendor/
 
-k8s-events-dispatcher
+k8s-event-collector
+event-collector
 config.json
 
 .idea

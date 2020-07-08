@@ -3,8 +3,9 @@ package main
 import (
 	"time"
 
-	"github.com/abowloflrf/k8s-events-dispatcher/config"
-	"github.com/abowloflrf/k8s-events-dispatcher/receiver"
+	"github.com/abowloflrf/k8s-event-collector/config"
+	"github.com/abowloflrf/k8s-event-collector/receiver"
+
 	"github.com/sirupsen/logrus"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/wait"

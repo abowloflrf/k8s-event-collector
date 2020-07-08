@@ -31,8 +31,8 @@ func InitConf(configFile string) {
 		viper.SetConfigFile(configFile)
 	} else {
 		viper.SetConfigName("config")
-		viper.AddConfigPath("/etc/eventsdispatcher")
-		viper.AddConfigPath("$HOME/.config/eventsdispatcher")
+		viper.AddConfigPath("/etc/event-collector")
+		viper.AddConfigPath("$HOME/.config/event-collector")
 		viper.AddConfigPath(".")
 	}
 	if err := viper.ReadInConfig(); err != nil {

@@ -1,4 +1,4 @@
-module github.com/abowloflrf/k8s-events-dispatcher
+module github.com/abowloflrf/k8s-event-collector
 
 go 1.14
 

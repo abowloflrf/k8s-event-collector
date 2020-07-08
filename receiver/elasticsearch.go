@@ -7,7 +7,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/abowloflrf/k8s-events-dispatcher/config"
+	"github.com/abowloflrf/k8s-event-collector/config"
+
 	"github.com/elastic/go-elasticsearch/v7"
 	"github.com/elastic/go-elasticsearch/v7/esapi"
 	"github.com/sirupsen/logrus"

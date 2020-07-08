@@ -14,17 +14,17 @@ import (
 	"k8s.io/client-go/tools/leaderelection"
 	"k8s.io/client-go/tools/leaderelection/resourcelock"
 
-	"github.com/abowloflrf/k8s-events-dispatcher/config"
+	"github.com/abowloflrf/k8s-event-collector/config"
 	"github.com/sirupsen/logrus"
 )
 
 var configFile string
 var LeaderElect bool
 
-const component = "eventsdispatcher"
+const component = "event-collector"
 
 func init() {
-	flag.StringVar(&configFile, "c", "", "config file to use, default find path: ./config.json -> /etc/eventsdispatcher/config.json -> $HOME/.config/eventsdispatcher/config.json")
+	flag.StringVar(&configFile, "c", "", "config file to use, default find path: ./config.json -> /etc/event-collector/config.json -> $HOME/.config/event-collector/config.json")
 	flag.BoolVar(&LeaderElect, "leaderelect", false, "set true to enable leader election mode, by default use standalone mode")
 	flag.Parse()
 	// initial logger using logurs
