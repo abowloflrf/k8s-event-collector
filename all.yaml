@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: eventsdispatcher
+  name: event-collector
   namespace: monitoring
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: eventsdispatcher
+  name: event-collector
 rules:
   - apiGroups: [""]
     resources: ["events"]
@@ -19,14 +19,14 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: eventsdispatcher
+  name: event-collector
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: eventsdispatcher
+  name: event-collector
 subjects:
   - kind: ServiceAccount
-    name: eventsdispatcher
+    name: event-collector
     namespace: monitoring
 ---
 apiVersion: v1
@@ -37,45 +37,46 @@ data:
         "receivers": {
             "elasticsearch": {
                 "addresses": [
-                    "http://kibana:9200"
+                    "http://es:9200"
                 ],
                 "index": "demo_k8s_event",
                 "username": "username",
                 "password": "password"
-            }
+            },
+            "stdout": false
         }
     }
 kind: ConfigMap
 metadata:
-  name: eventsdispatcher-cm
+  name: event-collector-cm
   namespace: monitoring
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: eventsdispatcher
+  name: event-collector
   namespace: monitoring
   labels:
-    app: eventsdispatcher
+    app: event-collector
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: eventsdispatcher
+      app: event-collector
   template:
     metadata:
       labels:
-        app: eventsdispatcher
+        app: event-collector
     spec:
       containers:
-        - name: dispatcher
-          image: abowloflrf/k8s-events-dispatcher:latest
+        - name: collector
+          image: abowloflrf/k8s-event-collector:latest
           imagePullPolicy: Always
           volumeMounts:
             - name: config-volume
-              mountPath: /etc/eventsdispatcher
-      serviceAccountName: eventsdispatcher
+              mountPath: /etc/event-collector
+      serviceAccountName: event-collector
       volumes:
         - name: config-volume
           configMap:
-            name: eventsdispatcher-cm
+            name: event-collector-cm

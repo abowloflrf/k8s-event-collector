@@ -22,13 +22,13 @@ type EventController struct {
 	evInformer        coreinformers.EventInformer
 	stopper           chan struct{}
 	informerHasSynced bool
-	r                 receiver.Receiver
+	targets           []receiver.Receiver
 	queue             workqueue.Interface
 }
 
 func (ec *EventController) enqueue(e *corev1.Event, handleType string) {
 	logrus.Infof("event %s [%s][%s/%s][%s], last since %v", handleType, string(e.UID), e.InvolvedObject.Namespace, e.InvolvedObject.Name, e.Reason, time.Since(e.LastTimestamp.Time))
-	// prevent handle the old events when controller just start
+	// prevent old events being handled when controller just start
 	if time.Since(e.LastTimestamp.Time) > time.Second*5 {
 		return
 	}
@@ -48,13 +48,17 @@ func (ec *EventController) processNextItem() bool {
 	}
 	event := item.(*corev1.Event)
 	defer ec.queue.Done(item)
-	if !ec.r.Filter(event) {
-		return true
+
+	for _, t := range ec.targets {
+		if !t.Filter(event) {
+			continue
+		}
+		err := t.Send(event)
+		if err != nil {
+			logrus.Errorf("send event to [%s] error: %v", t.Name(), err)
+		}
 	}
-	err := ec.r.Send(event)
-	if err != nil {
-		logrus.Errorf("send event to [%s] error: %v", ec.r.Name(), err)
-	}
+
 	return true
 }
 
@@ -99,27 +103,30 @@ func NewEventController(cs *kubernetes.Clientset) *EventController {
 	factory := informers.NewSharedInformerFactory(cs, 0)
 	evInformer := factory.Core().V1().Events()
 
-	// only es receiver was implemented currently
-	var err error
-	var target receiver.Receiver
+	// elasticsearch / stdout
+	var targets []receiver.Receiver
 	if config.C.Receivers.ElasticSearch != nil {
-		target, err = receiver.NewElasticsearchTarget(config.C.Receivers.ElasticSearch)
+		target, err := receiver.NewElasticsearchTarget(config.C.Receivers.ElasticSearch)
 		if err != nil {
 			logrus.Errorf("create receiver error: %v", err)
-			target, _ = receiver.NewDiscardTarget()
+		} else {
+			targets = append(targets, target)
+			logrus.Infof("receiver loaded, %s", target.Name())
 		}
-	} else {
-		target, _ = receiver.NewDiscardTarget()
+	}
+	if config.C.Receivers.Stdout {
+		target, _ := receiver.NewStdoutTarget()
+		targets = append(targets, target)
+		logrus.Infof("receiver loaded, %s", target.Name())
 	}
 
 	ec := &EventController{
 		clientset:       cs,
 		informerFactory: factory,
 		evInformer:      evInformer,
-
-		stopper: make(chan struct{}),
-		r:       target,
-		queue:   workqueue.New(),
+		stopper:         make(chan struct{}),
+		targets:         targets,
+		queue:           workqueue.New(),
 	}
 	ec.addHandlers()
 

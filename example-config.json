@@ -8,6 +8,7 @@
             "index": "demo_k8s_event",
             "username": "username",
             "password": "password"
-        }
+        },
+        "stdout": false
     }
 }
